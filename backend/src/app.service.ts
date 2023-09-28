@@ -19,6 +19,8 @@ export class AppService {
 
   createUser(createUserDto: CreateUserDto) {
     this.users.push(createUserDto);
+
+    //Event pattern communication
     this.communicationClient.emit(
       'user_created',
       new CreateUserEvent(createUserDto.email),
@@ -29,5 +31,11 @@ export class AppService {
     );
   }
 
-  getAnalytics() {}
+  getAnalytics() {
+    //Message pattern communication
+    //send returns a "cold" obsseravable, so only when subscribed to this call
+    //the message will be sent.
+    //luckily when an observer is returned from a controller, NestJs automatically subscribes it for us
+    this.analyticsClient.send({ cmd: 'get_analytics' }, {});
+  }
 }
